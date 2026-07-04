@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mi-app
+  labels:
+    app: mi-app
+spec:
+  # 2 réplicas: dos pods corriendo en paralelo para alta disponibilidad
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mi-app
+  template:
+    metadata:
+      labels:
+        app: mi-app
+    spec:
+      containers:
+        - name: mi-app
+          # La imagen se reemplaza en el pipeline con la etiqueta del commit.
+          # Placeholder para pruebas locales:
+          image: ghcr.io/OWNER/mi-app-web:latest
+          ports:
+            - containerPort: 3000
+          # Inyectamos la variable de entorno desde el ConfigMap
+          envFrom:
+            - configMapRef:
+                name: mi-app-config
+          # Siempre definir límites de recursos en producción
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+          # Kubernetes usa estos probes para saber si el pod está vivo y listo
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 3
+            periodSeconds: 5

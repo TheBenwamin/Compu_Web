@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mi-app-config
+data:
+  # Variable de entorno que la app leerá (process.env.APP_ENV)
+  APP_ENV: "production"
