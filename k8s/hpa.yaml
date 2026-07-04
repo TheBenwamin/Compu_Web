@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: mi-app-hpa
+spec:
+  # A qué recurso escala: el Deployment "mi-app" definido en deployment.yaml
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: mi-app
+  # Nunca menos de 2 réplicas (misma base que el Deployment, para alta disponibilidad)
+  minReplicas: 2
+  # Tope de 6 réplicas para no escalar sin control ante picos de tráfico
+  maxReplicas: 6
+  metrics:
+    # Escala en base al uso de CPU de los pods (requiere metrics-server en el clúster)
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # Si el uso promedio de CPU supera el 70% de lo solicitado (requests.cpu),
+          # el HPA agrega réplicas; si baja, las quita (sin bajar de minReplicas)
+          averageUtilization: 70

@@ -72,6 +72,19 @@ jobs:
       - run: kubectl cluster-info
       - run: kubectl get nodes
 
+      - name: Instalar metrics-server (requerido por el HPA)
+        run: |
+          kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+          kubectl patch deployment metrics-server -n kube-system --type=json \
+            -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+          kubectl rollout status deployment/metrics-server -n kube-system --timeout=90s
+
+      - name: Instalar ingress-nginx (requerido por el Ingress)
+        run: |
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          kubectl wait --namespace ingress-nginx --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller --timeout=120s
+
       - name: Fijar imagen real en el Deployment
         run: |
           IMAGE=$(echo "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]')
@@ -80,8 +93,12 @@ jobs:
       - run: kubectl apply -f k8s/configmap.yaml
       - run: kubectl apply -f k8s/deployment.yaml
       - run: kubectl apply -f k8s/service.yaml
+      - run: kubectl apply -f k8s/hpa.yaml
+      - run: kubectl apply -f k8s/ingress.yaml
 
       - run: kubectl rollout status deployment/mi-app --timeout=120s
 
       - run: kubectl get pods -o wide
       - run: kubectl get svc
+      - run: kubectl get hpa
+      - run: kubectl get ingress

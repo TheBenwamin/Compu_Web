@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mi-app-ingress
+  annotations:
+    # Reescribe cualquier path entrante a "/" antes de enviarlo al backend,
+    # necesario porque el controller nginx no lo hace por defecto
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  # Clase del Ingress Controller que debe atender esta regla (ingress-nginx)
+  ingressClassName: nginx
+  rules:
+    # El Ingress expone la app por un nombre de host en vez de un puerto del nodo,
+    # como haría un proxy reverso HTTP delante del Service
+    - host: compu-web.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                # Enruta el tráfico al Service "mi-app-svc" (definido en service.yaml)
+                name: mi-app-svc
+                port:
+                  number: 80
