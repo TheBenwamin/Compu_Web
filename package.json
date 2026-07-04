@@ -1,18 +1,15 @@
-# mi-app-web — CI/CD con GitHub Actions + Kubernetes
-
-Repositorio de ejemplo para la asignatura de **Computación Web**. Demuestra dos tecnologías de DevOps trabajando juntas:
+# Compu_Web — CI/CD con GitHub Actions + Kubernetes
 
 1. **GitHub Actions** — pipeline de CI/CD que testea, construye una imagen Docker y despliega.
 2. **Kubernetes** — la app se despliega en un clúster mediante manifiestos declarativos (`Deployment`, `Service`, `ConfigMap`).
 
-La aplicación en sí es intencionalmente mínima: un servidor **Node.js + Express** con dos endpoints. Lo interesante no es la app, sino el **flujo automatizado** que la rodea.
-
+La aplicación en sí es simple: un servidor **Node.js + Express** con dos endpoints. 
 ---
 
 ## Estructura del proyecto
 
 ```
-mi-app-web/
+Compu_Web/
 ├── src/index.js              # Servidor Express
 ├── test/app.test.js          # Tests con Jest + supertest
 ├── package.json
@@ -81,8 +78,6 @@ El pipeline (`.github/workflows/ci-cd.yml`) se dispara en cada `push` a `main` y
 El job `docker` se autentica contra GHCR usando `secrets.GITHUB_TOKEN`, un token que **GitHub genera automáticamente** en cada ejecución. No hace falta crear cuentas ni configurar credenciales de Docker Hub o de un cloud provider.
 
 ---
-
-## ¿Por qué la Opción A para el deploy? (justificación)
 
 Un pipeline de CI/CD "de libro" termina desplegando en un clúster gestionado en la nube (EKS en AWS, GKE en Google, AKS en Azure). El problema para un repositorio académico es que esa última etapa **no es reproducible por quien clona el repo**: requiere una cuenta cloud con facturación activa, un clúster ya creado, y secrets con credenciales de larga duración configurados en el repositorio. Si esos secrets no existen, el job de deploy simplemente falla, y el pipeline queda "roto" para cualquiera que lo revise.
 
