@@ -1,14 +1,9 @@
 # Compu_Web — CI/CD con GitHub Actions + Kubernetes
 
-Proyecto de Computación Web que demuestra un pipeline de **CI/CD** completo usando dos
-tecnologías:
-
 1. **GitHub Actions** — pipeline de CI/CD que testea, construye una imagen Docker y despliega.
 2. **Kubernetes** — la app se despliega en un clúster mediante manifiestos declarativos (`Deployment`, `Service`, `ConfigMap`).
 
 La aplicación en sí es simple: un servidor **Node.js + Express** con dos endpoints.
-
-Repo: https://github.com/TheBenwamin/Compu_Web
 
 ---
 
