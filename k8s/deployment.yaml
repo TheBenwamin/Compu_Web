@@ -18,8 +18,8 @@ spec:
       containers:
         - name: mi-app
           # La imagen se reemplaza en el pipeline con la etiqueta del commit.
-          # Placeholder para pruebas locales:
-          image: ghcr.io/OWNER/mi-app-web:latest
+          # Placeholder para pruebas locales (debe ir en minúsculas, requisito de GHCR):
+          image: ghcr.io/thebenwamin/compu_web:latest
           ports:
             - containerPort: 3000
           # Inyectamos la variable de entorno desde el ConfigMap

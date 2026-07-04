@@ -1,4 +1,5 @@
 const express = require("express");
+const os = require("os");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -7,9 +8,9 @@ const APP_ENV = process.env.APP_ENV || "development";
 // Endpoint principal
 app.get("/", (req, res) => {
   res.json({
-    message: "Hola desde mi-app-web!",
+    message: "Hola desde Compu_Web!",
     env: APP_ENV,
-    hostname: require("os").hostname(),
+    hostname: os.hostname(),
   });
 });
 
